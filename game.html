@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danger Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .game-container {
+            width: 95%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #b83e02;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 2px;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .square {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid #aaa;
+            position: relative;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .square:hover {
+            background-color: #ccc;
+        }
+        .square.revealed {
+            background-color: #eee;
+        }
+        .square.voltorb {
+            background-color: #ff4444;
+        }
+        .square.point {
+            background-color: #bbf7d0;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .row-info, .col-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 0.5rem;
+        }
+        .row-number, .col-number {
+            font-size: 0.8rem;
+            color: #b83e02;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #control-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #reset-button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #3b82f6;
+            color: #fff;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        #reset-button:hover {
+            background-color: #2563eb;
+        }
+        #message-box {
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #333;
+            min-height: 1rem;
+            text-align: center;
+        }
+         #score-box {
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #333;
+            min-height: 1rem;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+        }
+        .game-over-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+        .game-over-content {
+            background-color: #fff;
+            color: #000;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .game-over-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #000000;
+        }
+        .game-over-message {
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+            color: #000; /* Set default text color to black */
+        }
+        .game-over-button {
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+        .game-over-button:hover {
+            background-color: #2563eb;
+        }
+        #difficulty-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            gap: 10px;
+        }
+        .difficulty-button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #3b82f6;
+            color: #fff;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .difficulty-button:hover {
+            background-color: #2563eb;
+        }
+        .difficulty-button.selected {
+            background-color: #1e40af;
+            box-shadow: 0 0 5px #fff;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html">Resume</a> |
+    <a href="scratch.html">scratch</a> |
+    <div class="game-container">
+        <h1>Danger Grid</h1>
+        <p style="font-size: 0.6rem; margin-bottom: 1rem;">Use the clues to find all the points (P) without hitting a bomb (B).</p>
+        <div id="score-box">Score: <span id="current-score">0</span></div>
+        <div id="game-board"></div>
+        <div id="message-box"></div>
+        <div class="info">
+            <div class="row-info" id="row-info"></div>
+            <div class="col-info" id="col-info"></div>
+        </div>
+        <div id="control-panel">
+            <button id="reset-button">Reset</button>
+        </div>
+    </div>
+    <script>
+        const gridSize = 5;
+        let board = [];
+        let isGameOver = false;
+        let score = 0;
+        let revealedCount = 0;
+        let voltorbCount = 0;
+        let totalPoints = 0;
+        let multiplier = 1;
+        let difficulty = 'medium';  // Default difficulty
+        let numVoltorbs = 0;
+        let maxPoints = 0;
+        const gameBoardElement = document.getElementById('game-board');
+        const messageBox = document.getElementById('message-box');
+        const resetButton = document.getElementById('reset-button');
+        const rowInfoElement = document.getElementById('row-info');
+        const colInfoElement = document.getElementById('col-info');
+        const scoreDisplay = document.getElementById('current-score');
+        const difficultyButtons = document.querySelectorAll('.difficulty-button');
+        resetButton.addEventListener('click', initializeGame);
+        function initializeGame() {
+            isGameOver = false;
+            board = [];
+            score = 0;
+            revealedCount = 0;
+            voltorbCount = 0;
+            totalPoints = 0;
+            multiplier = 1;
+            gameBoardElement.innerHTML = '';
+            rowInfoElement.innerHTML = '';
+            colInfoElement.innerHTML = '';
+            numVoltorbs = 5;
+            multiplier = 2;
+            // Create the grid
+            for (let i = 0; i < gridSize; i++) {
+                board[i] = [];
+                for (let j = 0; j < gridSize; j++) {
+                    const randomNumber = Math.random();
+                    if (randomNumber < numVoltorbs / (gridSize * gridSize)) {
+                        board[i][j] = { type: 'voltorb', isRevealed: false, value: 0 };
+                        voltorbCount++;
+                    } else {
+                        const pointValue = Math.ceil(Math.random() * 3);
+                        board[i][j] = { type: 'point', isRevealed: false, value: pointValue };
+                        totalPoints += pointValue;
+                    }
+                }
+            }
+            renderBoard();
+            updateScoreDisplay();
+            messageBox.textContent = 'Game initialized! Select a square to start.';
+        }
+        function handleSquareClick(row, col) {
+            if (isGameOver)
+                return;
+            if (board[row][col].isRevealed)
+                return;
+            board[row][col].isRevealed = true;
+            revealedCount++;
+            if (board[row][col].type === 'voltorb') {
+                isGameOver = true;
+                revealAllSquares();
+                messageBox.textContent = 'Your Score: ' + score;
+            } else {
+                score += board[row][col].value * multiplier;
+                updateScoreDisplay();
+                if (checkWinCondition()) {
+                    isGameOver = true;
+                    messageBox.textContent = `Victory! Your score is ${score}.`;
+                }
+            }
+            renderBoard();
+        }
+        function revealAllSquares() {
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    board[i][j].isRevealed = true;
+                }
+            }
+        }
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = score;
+        }
+        function renderBoard() {
+            gameBoardElement.innerHTML = '';
+            rowInfoElement.innerHTML = '';
+            colInfoElement.innerHTML = '';
+            // Create row numbers
+            const emptySquare = document.createElement('div');
+            gameBoardElement.appendChild(emptySquare); // Top-left empty square
+            for (let j = 0; j < gridSize; j++) {
+                const colNumberDiv = document.createElement('div');
+                colNumberDiv.classList.add('col-number');
+                colNumberDiv.textContent = 'C' + (j + 1); // Display column number
+                gameBoardElement.appendChild(colNumberDiv);
+            }
+            for (let i = 0; i < gridSize; i++) {
+                const rowNumberDiv = document.createElement('div');
+                rowNumberDiv.classList.add('row-number');
+                rowNumberDiv.textContent = 'R' + (i + 1); // Display row number
+                gameBoardElement.appendChild(rowNumberDiv);
+                let rowVoltorbs = 0;
+                let rowPoints = 0;
+                let colVoltorbs = 0;
+                let colPoints = 0;
+                for (let j = 0; j < gridSize; j++) {
+                    if (board[i][j].type === 'voltorb') {
+                        rowVoltorbs++;
+                    } else {
+                        rowPoints += board[i][j].value;
+                    }
+                    if (board[j][i].type === 'voltorb') {
+                        colVoltorbs++;
+                    } else {
+                        colPoints += board[j][i].value;
+                    }
+                }
+                const rowInfoDiv = document.createElement('div');
+                rowInfoDiv.classList.add('row-info');
+                rowInfoDiv.textContent = `R${i + 1}: B:${rowVoltorbs}, P:${rowPoints}`; // Added row label
+                rowInfoElement.appendChild(rowInfoDiv);
+                const colInfoDiv = document.createElement('div');
+                colInfoDiv.classList.add('col-info');
+                colInfoDiv.textContent = `C${i + 1}: B:${colVoltorbs}, P:${colPoints}`; // Added column label
+                colInfoElement.appendChild(colInfoDiv);
+                for (let j = 0; j < gridSize; j++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    if (board[i][j].isRevealed) {
+                        square.classList.add(board[i][j].type);
+                        if (board[i][j].type === 'voltorb') {
+                            square.innerHTML = '<br><br>B';
+                        } else {
+                            square.innerHTML = '<br><br>' + board[i][j].value;
+                        }
+                    }
+                    square.addEventListener('click', () => handleSquareClick(i, j));
+                    gameBoardElement.appendChild(square);
+                }
+            }
+            if (isGameOver) {
+                const gameOverOverlay = document.createElement('div');
+                gameOverOverlay.classList.add('game-over-overlay');
+                const gameOverContent = document.createElement('div');
+                gameOverContent.classList.add('game-over-content');
+                const title = document.createElement('h2');
+                title.classList.add('game-over-title');
+                title.textContent = isGameOver ? 'Your Score!' : 'Victory!';
+                const message = document.createElement('p');
+                message.classList.add('game-over-message');
+                message.style.color = '#000'; // Set message text color to black
+                message.textContent = isGameOver ? ' ' + score : `You Cleared the Board! Your score is ${score}.`;
+                const newGameButton = document.createElement('button');
+                newGameButton.classList.add('game-over-button');
+                newGameButton.textContent = 'New Game';
+                newGameButton.addEventListener('click', () => {
+                    initializeGame();
+                    gameOverOverlay.remove();
+                });
+                gameOverContent.appendChild(title);
+                gameOverContent.appendChild(message);
+                gameOverContent.appendChild(newGameButton);
+                gameOverOverlay.appendChild(gameOverContent);
+                document.body.appendChild(gameOverOverlay);
+            }
+        }
+        // New function to check for victory condition
+        function checkWinCondition() {
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (board[i][j].type === 'point' && !board[i][j].isRevealed) {
+                        return false; // If any point square is not revealed, game is not won
+                    }
+                }
+            }
+            return true; // All point squares are revealed, game is won
+        }
+        // Initialize the game when the page loads
+        initializeGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+p{
+    font-family: sans-serif !important;
+    font-size: large;
+    color: rgb(0, 0, 0) !important; 
+}
+
+.date{
+    font-family: sans-serif;
+    color: rgba(0, 0, 0, 0.745);
+}

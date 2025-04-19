@@ -1,0 +1,91 @@
+
+body {
+    background-color: #f0f0e6;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack items vertically by default */
+    align-items: center; /* Center items horizontally */
+    min-height: 100vh; /* Ensure full viewport height */
+}
+.container {
+    max-width: 800px;
+    width: 95%; /* Take up most of the viewport width */
+    margin: 20px 0; /* Adjust vertical margins, remove horizontal */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+h1 {
+    color: #b83e02;
+    text-align: center;
+}
+h2 {
+    color: #b83e02;
+}
+a {
+    color: #0078d7;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+ol {
+    list-style-type: upper-roman;
+}
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+/* Added to reduce side spacing and improve layout */
+body {
+    margin: 0 auto;
+    max-width: 100%;
+}
+.container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Styles for header and footer (optional, for completeness) */
+header, footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    color: #fff;
+    background-color: #333;
+}
+header {
+    margin-bottom: 20px;
+}
+footer {
+    margin-top: 20px;
+}
+
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tableauViz {
+    width: 100%;
+    height: auto;
+    min-height: 500px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: block;
+}
+@media (max-width: 800px) {
+    .tableauViz {
+        height: 700px;
+    }
+}
+@media (max-width: 600px) {
+    .tableauViz {
+        height: 800px;
+    }
+}
